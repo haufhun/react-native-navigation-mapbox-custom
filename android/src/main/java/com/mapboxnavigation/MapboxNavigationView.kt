@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
 import android.location.LocationManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -87,6 +88,7 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
     }
 
     private var origin: Point? = null
+    private var stop1: Point? = null
     private var destination: Point? = null
     private var shouldSimulateRoute = false
     private var showsEndOfRouteFeedback = false
@@ -284,6 +286,7 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
      */
     private val locationObserver = object : LocationObserver {
         override fun onNewRawLocation(rawLocation: Location) {
+            Log.d("HunterMapbox", "onNewRawLocation")
             // not handled
         }
 
@@ -620,6 +623,7 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
 
     private fun startRoute() {
         // register event listeners
+        Log.d("HunterMapbox", "Starting route. Registering event listeners")
         mapboxNavigation.registerRoutesObserver(routesObserver)
         mapboxNavigation.registerArrivalObserver(arrivalObserver)
         mapboxNavigation.registerRouteProgressObserver(routeProgressObserver)
@@ -651,10 +655,12 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
 
     private fun findRoute(origin: Point, destination: Point) {
         try {
+            Log.d("HunterMapbox", "Before requestRoutes. This has listOf")
             mapboxNavigation.requestRoutes(
                 RouteOptions.builder()
                     .applyDefaultNavigationOptions()
                     .applyLanguageAndVoiceUnitOptions(context)
+                    // .coordinatesList(listOf(origin, stop1, destination))
                     .coordinatesList(listOf(origin, destination))
                     .profile(DirectionsCriteria.PROFILE_DRIVING)
                     .steps(true)
@@ -679,7 +685,9 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
                     }
                 }
             )
+            Log.d("HunterMapbox", "Before requestRoutes. This has listOf")
         } catch (ex: Exception) {
+            Log.d("HunterMapbox", "Error in findRoute")
             sendErrorToReact(ex.toString())
         }
 
@@ -702,6 +710,7 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
         // will be used for active guidance
         mapboxNavigation.setRoutes(routes)
 
+        Log.d("HunterMapbox", "setRouteAndStartNavigation")
         // start location simulation along the primary route
         if (shouldSimulateRoute) {
             startSimulation(routes.first())
@@ -747,6 +756,11 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
 
     fun setOrigin(origin: Point?) {
         this.origin = origin
+    }
+
+    fun setStop1(stop1: Point?) {
+        Log.d("HunterMapbox", "Setting stop1 in MapboxNavigationView")
+        this.stop1 = stop1
     }
 
     fun setDestination(destination: Point?) {

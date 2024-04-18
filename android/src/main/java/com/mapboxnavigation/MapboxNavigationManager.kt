@@ -1,6 +1,7 @@
 package com.mapboxnavigation
 
 import android.content.pm.PackageManager
+import android.util.Log
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
@@ -25,6 +26,7 @@ class MapboxNavigationManager(var mCallerContext: ReactApplicationContext) : Sim
           tileStoreUsageMode(TileStoreUsageMode.READ_ONLY)
         }
       } catch (e: PackageManager.NameNotFoundException) {
+        Log.d("HunterMapbox", "Error in init")
         e.printStackTrace()
       }
     }
@@ -52,11 +54,25 @@ class MapboxNavigationManager(var mCallerContext: ReactApplicationContext) : Sim
 
   @ReactProp(name = "origin")
   fun setOrigin(view: MapboxNavigation, sources: ReadableArray?) {
+    Log.d("HunterMapbox", "setOrigin")
     if (sources == null) {
       view.setOrigin(null)
       return
     }
     view.setOrigin(Point.fromLngLat(sources.getDouble(0), sources.getDouble(1)))
+  }
+
+  @ReactProp(name = "stop1")
+  fun setStop1(view: MapboxNavigation, sources: ReadableArray?) {
+    Log.d("HunterMapbox", "setStop1 NO VALUE")
+
+    if (sources == null) {
+      view.setStop1(null)
+      return
+    }
+
+    Log.d("HunterMapbox", "setStop1 latitude: $sources.getDouble(0)")
+    view.setStop1(Point.fromLngLat(sources.getDouble(0), sources.getDouble(1)))
   }
 
   @ReactProp(name = "destination")

@@ -88,7 +88,7 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
     }
 
     private var origin: Point? = null
-    private var stop1: Point? = null
+    private var stops: List<Point>? = null
     private var destination: Point? = null
     private var shouldSimulateRoute = false
     private var showsEndOfRouteFeedback = false
@@ -654,14 +654,26 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
     }
 
     private fun findRoute(origin: Point, destination: Point) {
+        var coordinatesList: List<Point> = emptyList()
+        try {
+            Log.d("HunterMapbox", "Creating an array of points...")
+            if (this.stops == null) {
+                coordinatesList = listOf(origin, destination)
+            } else {
+                coordinatesList =  listOf(origin) + (this.stops ?: emptyList()) + listOf(destination)
+            }
+        } catch (ex: Exception) {
+            Log.d("HunterMapbox", "Error using stops")
+            coordinatesList = listOf(origin, destination)
+        }
+
         try {
             Log.d("HunterMapbox", "Before requestRoutes. This has listOf")
             mapboxNavigation.requestRoutes(
                 RouteOptions.builder()
                     .applyDefaultNavigationOptions()
                     .applyLanguageAndVoiceUnitOptions(context)
-                    // .coordinatesList(listOf(origin, stop1, destination))
-                    .coordinatesList(listOf(origin, destination))
+                    .coordinatesList(coordinatesList)
                     .profile(DirectionsCriteria.PROFILE_DRIVING)
                     .steps(true)
                     .build(),
@@ -758,9 +770,9 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
         this.origin = origin
     }
 
-    fun setStop1(stop1: Point?) {
-        Log.d("HunterMapbox", "Setting stop1 in MapboxNavigationView")
-        this.stop1 = stop1
+    fun setStops(stops: List<Point>?) {
+        Log.d("HunterMapbox", "Setting stops in MapboxNavigationView")
+        this.stops = stops
     }
 
     fun setDestination(destination: Point?) {

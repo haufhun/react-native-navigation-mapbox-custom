@@ -62,17 +62,29 @@ class MapboxNavigationManager(var mCallerContext: ReactApplicationContext) : Sim
     view.setOrigin(Point.fromLngLat(sources.getDouble(0), sources.getDouble(1)))
   }
 
-  @ReactProp(name = "stop1")
-  fun setStop1(view: MapboxNavigation, sources: ReadableArray?) {
-    Log.d("HunterMapbox", "setStop1 NO VALUE")
-
-    if (sources == null) {
-      view.setStop1(null)
+  @ReactProp(name = "stops")
+  fun setStops(view: MapboxNavigation, sources: ReadableArray?) {
+    Log.d("HunterMapbox", "setStops")
+    if (sources == null || sources.size() == 0) {
+      view.setStops(null)
       return
     }
 
-    Log.d("HunterMapbox", "setStop1 latitude: $sources.getDouble(0)")
-    view.setStop1(Point.fromLngLat(sources.getDouble(0), sources.getDouble(1)))
+    // Assuming each inner array contains two elements (for longitude and latitude)
+    val stopsArray: List<Point> = ArrayList<Point>().apply {
+      for (i in 0 until sources.size()) {
+        val innerArray: ReadableArray = sources.getArray(i)
+
+        if (innerArray.size() >= 2) {
+          val longitude = innerArray.getDouble(0)
+          val latitude = innerArray.getDouble(1)
+          add(Point.fromLngLat(longitude, latitude))
+        }
+      }
+    }.toList()
+
+    // Pass the list of points to the view's setStops method
+    view.setStops(stopsArray)
   }
 
   @ReactProp(name = "destination")

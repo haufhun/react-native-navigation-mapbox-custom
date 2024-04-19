@@ -592,7 +592,7 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
 
         // initialize view interactions
         binding.stop.setOnClickListener {
-//            clearRouteAndStopNavigation() // TODO: figure out how we want to address this since a user cannot reinitialize a route once it is canceled.
+           clearRouteAndStopNavigation() // TODO: figure out how we want to address this since a user cannot reinitialize a route once it is canceled.
             val event = Arguments.createMap()
             event.putString("onCancelNavigation", "Navigation Closed")
             context

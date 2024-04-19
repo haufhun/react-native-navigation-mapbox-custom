@@ -286,7 +286,7 @@ class MapboxNavigation(private val context: ThemedReactContext, private val acce
      */
     private val locationObserver = object : LocationObserver {
         override fun onNewRawLocation(rawLocation: Location) {
-            Log.d("HunterMapbox", "onNewRawLocation")
+            // Log.d("HunterMapbox", "onNewRawLocation")
             // not handled
         }
 
